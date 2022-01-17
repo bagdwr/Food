@@ -121,7 +121,7 @@
             }
         });
 
-        const modalTimerId = setTimeout(openModal, 5000);
+        // const modalTimerId = setTimeout(openModal, 5000);
 
         function showModalByScroll(){
             if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight-1) {
@@ -190,4 +190,55 @@
                 430,
                 ".menu .container",
                 "menu__item").render();
+
+        //AJAX form
+        const forms=document.querySelectorAll('form');
+        const message={
+            loading:"Загрузка",
+            success:"Спасибо, Скоро мы с вами свяжемся",
+            failure:"Что то пошло не так!"
+        }
+        
+        function postData(form){
+            form.addEventListener('submit',(event)=>{
+                event.preventDefault(); 
+
+                const statusMessage=document.createElement('div');
+                statusMessage.classList.add('status');
+                statusMessage.textContent=message.loading;
+                form.append(statusMessage);
+                
+                const request=new XMLHttpRequest();
+                request.open('POST',"server.php");
+                // request.setRequestHeader('Content-type','multipart/form-data');
+                const dataaa=new FormData(form);
+
+                //if Json
+                // request.setRequestHeader('Content-type','application/json');
+                // const object={};
+                // dataaa.forEach(function(value,key){
+                //     object[key]=value;
+                // });
+                // const jsonForm=JSON.stringify(object);
+                // request.send(jsonForm);
+
+                request.send(dataaa);
+                request.addEventListener('load',()=>{
+                    if(request.status===200){
+                        console.log(request.response);
+                        statusMessage.textContent=message.success;
+                        form.reset();
+                        setTimeout(()=>{
+                            statusMessage.remove();
+                        },2000); 
+                    }else{
+                        statusMessage.textContent=message.failure;
+                    }
+                });
+            })
+        }
+
+        forms.forEach(item=>{
+            postData(item);
+        });
     });

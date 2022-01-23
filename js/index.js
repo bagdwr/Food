@@ -188,7 +188,7 @@
                 ".menu .container",
                 "menu__item").render();
 
-        //AJAX form
+        //Fetch API form
         const forms=document.querySelectorAll('form');
         const message={
             loading:"img/form/spinner.svg",
@@ -207,11 +207,6 @@
                     margin:0px auto;
                 `;
                 form.insertAdjacentElement('afterend',statusMessage);
-               
-                
-                const request=new XMLHttpRequest();
-                request.open('POST',"server.php");
-                // request.setRequestHeader('Content-type','multipart/form-data');
                 const dataaa=new FormData(form);
 
                 //if Json
@@ -223,16 +218,23 @@
                 // const jsonForm=JSON.stringify(object);
                 // request.send(jsonForm);
 
-                request.send(dataaa);
-                request.addEventListener('load',()=>{
-                    if(request.status===200){
-                        console.log(request.response);
-                        showThanksModal(message.success);
-                        form.reset();
-                        statusMessage.remove();
-                    }else{
-                        showThanksModal(message.failure);
-                    }
+                // request.send(dataaa);
+                     
+                fetch("server.php",{
+                    method:"POST",
+                    // headers:{
+                    //     'Content-type':'multipart/form-data'
+                    // },
+                    body:dataaa
+                }).then(data=>data.text())
+                .then(data=>{
+                    console.log(data);
+                    showThanksModal(message.success);
+                    statusMessage.remove();
+                }).catch(()=>{
+                    showThanksModal(message.failure);
+                }).finally(()=>{
+                    form.reset();
                 });
             })
         }

@@ -196,7 +196,18 @@
             failure:"Что то пошло не так!"
         }
         
-        function postData(form){
+        const postData=async(url,data)=>{
+            const res=await fetch(url,{
+                method:"POST",
+                headers:{
+                    'Content-type':'application/json'
+                },
+                body:data}
+            );
+            return await res.json();
+        };
+
+        function bindPostData(form){
             form.addEventListener('submit',(event)=>{
                 event.preventDefault(); 
 
@@ -211,22 +222,17 @@
 
                 //if Json
                 // request.setRequestHeader('Content-type','application/json');
-                // const object={};
-                // dataaa.forEach(function(value,key){
-                //     object[key]=value;
-                // });
+                const object={};
+                dataaa.forEach(function(value,key){
+                    object[key]=value;
+                });
                 // const jsonForm=JSON.stringify(object);
                 // request.send(jsonForm);
 
                 // request.send(dataaa);
                      
-                fetch("server.php",{
-                    method:"POST",
-                    // headers:{
-                    //     'Content-type':'multipart/form-data'
-                    // },
-                    body:dataaa
-                }).then(data=>data.text())
+                postData("http://localhost:3000/requests", JSON.stringify(object))
+                .then(data=>data.text())
                 .then(data=>{
                     console.log(data);
                     showThanksModal(message.success);
@@ -237,9 +243,10 @@
                     form.reset();
                 });
 
-                fetch("http://localhost:3000/menu")
-                .then(data=>data.json())
-                .then(res=>console.log(res));
+                // fetch("http://localhost:3000/menu")
+                // .then(data=>data.json())
+                // .then(res=>console.log(res));
+
                 //npx json-server --watch db.json
                 
             })
@@ -269,6 +276,6 @@
         }
 
         forms.forEach(item=>{
-            postData(item);
+            bindPostData(item);
         });
     });

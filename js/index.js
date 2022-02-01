@@ -38,7 +38,7 @@
         });
 
         //Timer
-        const deadLine = '2022-02-02';
+        const deadLine = '2022-09-15';
 
         function getTimeRemaining(endtime) {
             const t = Date.parse(deadLine) - Date.parse(new Date),
@@ -107,7 +107,7 @@
         });
 
         modal.addEventListener('click', (event) => {
-            if (event.target && event.target === modal || event.target.getAttribute('data-close')=='') {
+            if (event.target && event.target === modal || event.target.getAttribute('data-close') == '') {
                 closeModal()
             }
         });
@@ -120,38 +120,38 @@
 
         const modalTimerId = setTimeout(openModal, 50000);
 
-        function showModalByScroll(){
-            if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight-1) {
+        function showModalByScroll() {
+            if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1) {
                 openModal();
-                window.removeEventListener('scroll',showModalByScroll);
+                window.removeEventListener('scroll', showModalByScroll);
             }
         }
 
-        window.addEventListener('scroll',showModalByScroll);
+        window.addEventListener('scroll', showModalByScroll);
 
         // Cards
-        class Card{
-            constructor(src,alt,title,descr,price,parentSelector,...classes){
-                this.src=src;
-                this.alt=alt;
-                this.title=title;
-                this.descr=descr;
-                this.price=price;
-                this.parent=document.querySelector(parentSelector);
-                this.transfer=430;
-                this.classes=classes;
+        class Card {
+            constructor(src, alt, title, descr, price, parentSelector, ...classes) {
+                this.src = src;
+                this.alt = alt;
+                this.title = title;
+                this.descr = descr;
+                this.price = price;
+                this.parent = document.querySelector(parentSelector);
+                this.transfer = 430;
+                this.classes = classes;
             }
 
-            changeToKZT(){
-                this.price=this.price*this.transfer;
+            changeToKZT() {
+                this.price = this.price * this.transfer;
             }
-            render(){
-                const element=document.createElement('div');
-                if(this.classes.length===0){
-                    this.classes=["menu__item"];
+            render() {
+                const element = document.createElement('div');
+                if (this.classes.length === 0) {
+                    this.classes = ["menu__item"];
                 }
-                this.classes.forEach(className=>element.classList.add(className));
-                element.innerHTML=`
+                this.classes.forEach(className => element.classList.add(className));
+                element.innerHTML = `
                             <img src=${this.src} alt=${this.alt}>
                             <h3 class="menu__item-subtitle">${this.title}</h3>
                             <div class="menu__item-descr">${this.descr}</div>
@@ -165,18 +165,24 @@
             }
         }
 
-        const getResource=async(url)=>{
-            const res=await fetch(url);
-            if(!res.ok){
+        const getResource = async (url) => {
+            const res = await fetch(url);
+            if (!res.ok) {
                 throw new Error(`Couldn't fetch ${url}, status: ${res.status} `);
             }
             return await res.json();
         };
 
         getResource("http://localhost:3000/menu")
-            .then(data=>{
-                data.forEach(({img,altimg,title,descr,price})=>{
-                        new Card(img,altimg,title,descr,price, ".menu .container").render();
+            .then(data => {
+                data.forEach(({
+                    img,
+                    altimg,
+                    title,
+                    descr,
+                    price
+                }) => {
+                    new Card(img, altimg, title, descr, price, ".menu .container").render();
                 });
             });
 
@@ -204,88 +210,130 @@
         // }    
 
         //Fetch API form
-        const forms=document.querySelectorAll('form');
-        const message={
-            loading:"img/form/spinner.svg",
-            success:"Спасибо, Скоро мы с вами свяжемся",
-            failure:"Что то пошло не так!"
+        const forms = document.querySelectorAll('form');
+        const message = {
+            loading: "img/form/spinner.svg",
+            success: "Спасибо, Скоро мы с вами свяжемся",
+            failure: "Что то пошло не так!"
         }
-        
-        const postData=async(url,data)=>{
-            const res=await fetch(url,{
-                method:"POST",
-                headers:{
-                    'Content-type':'application/json'
+
+        const postData = async (url, data) => {
+            const res = await fetch(url, {
+                method: "POST",
+                headers: {
+                    'Content-type': 'application/json'
                 },
-                body:data}
-            );
+                body: data
+            });
             return await res.json();
         };
 
-        function bindPostData(form){
-            form.addEventListener('submit',(event)=>{
-                event.preventDefault(); 
+        function bindPostData(form) {
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
 
-                const statusMessage=document.createElement('img');
-                statusMessage.src=message.loading;
-                statusMessage.style.cssText=`
+                const statusMessage = document.createElement('img');
+                statusMessage.src = message.loading;
+                statusMessage.style.cssText = `
                     display:block;
                     margin:0px auto;
                 `;
-                form.insertAdjacentElement('afterend',statusMessage);
-                const dataaa=new FormData(form);
-                const json=JSON.stringify(Object.fromEntries(dataaa.entries()));
-                
+                form.insertAdjacentElement('afterend', statusMessage);
+                const dataaa = new FormData(form);
+                const json = JSON.stringify(Object.fromEntries(dataaa.entries()));
+
                 // const jsonForm=JSON.stringify(object);
                 // request.send(jsonForm);
 
                 // request.send(dataaa);
-                     
-                postData("http://localhost:3000/requests", json)
-                .then(data=>data.text())
-                .then(data=>{
-                    console.log(data);
-                    showThanksModal(message.success);
-                    statusMessage.remove();
-                }).catch(()=>{
-                    showThanksModal(message.failure);
-                }).finally(()=>{
-                    form.reset();
-                });
 
-                // fetch("http://localhost:3000/menu")
-                // .then(data=>data.json())
-                // .then(res=>console.log(res));
+                postData("http://localhost:3000/requests", json)
+                    .then(data => data.text())
+                    .then(data => {
+                        console.log(data);
+                        showThanksModal(message.success);
+                        statusMessage.remove();
+                    }).catch(() => {
+                        showThanksModal(message.failure);
+                    }).finally(() => {
+                        form.reset();
+                    });
 
                 //npx json-server --watch db.json
-                
+
             })
         }
 
-        function showThanksModal(message){
-            const prevModalDialog=document.querySelector('.modal__dialog');
+        function showThanksModal(message) {
+            const prevModalDialog = document.querySelector('.modal__dialog');
             prevModalDialog.classList.add('hide');
-            if(!modal.classList.contains('show')){
-               openModal();
+            if (!modal.classList.contains('show')) {
+                openModal();
             }
 
-            const thanksModal=document.createElement('div');
+            const thanksModal = document.createElement('div');
             thanksModal.classList.add('modal__dialog');
-            thanksModal.innerHTML=`
+            thanksModal.innerHTML = `
                 <div class="modal__content">
                         <div data-close class="modal__close">&times;</div>
                         <div class="modal__title">${message}</div>
                 </div>
             `;
             modal.append(thanksModal);
-            setTimeout(()=>{
+            setTimeout(() => {
                 thanksModal.remove();
                 prevModalDialog.classList.remove('hide');
                 closeModal();
-            },4000);
+            }, 4000);
         }
 
-        forms.forEach(item=>{
+        forms.forEach(item => {
             bindPostData(item);
         });
+
+        // Slider
+        const slides = document.querySelectorAll(".offer__slide"),
+            prev = document.querySelector(".offer__slider-prev"),
+            next = document.querySelector(".offer__slider-next"),
+            total=document.querySelector("#total"),
+            current=document.querySelector("#current");
+        let slideIndex = 1;
+        showSlides(slideIndex);
+
+        if(slides.length<10){
+            total.textContent=`0${slides.length}`;
+        }else{
+            total.textContent=`${slides.length}`;
+        }
+
+        function showSlides(n) {
+            if (n > slides.length) {
+                slideIndex = 1;
+            }
+            if (n < 1) {
+                slideIndex = slides.length;
+            }
+
+            if(slideIndex<10){
+                current.textContent=`0${slideIndex}`;
+            }else{
+                current.textContent=`${slideIndex}`;
+            }
+
+            slides.forEach(it=>it.style.display="none");
+            slides[slideIndex-1].style.display="block";
+        }
+
+        function plusSlides(n){
+            showSlides(slideIndex+=n);
+        }
+        prev.addEventListener("click",()=>{
+            plusSlides(-1);
+        });
+        next.addEventListener("click",()=>{
+            plusSlides(1);
+        });
+        
+
+
     });

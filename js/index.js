@@ -377,10 +377,10 @@
         }
 
         next.addEventListener('click',()=>{
-            if(offset==width.slice(0,width.length-2)*(slides.length-1)){
+            if(offset==width.replace(/\D/g,'')*(slides.length-1)){
                 offset=0;
             }else{
-                offset+=+width.slice(0,width.length-2);
+                offset+=+width.replace(/\D/g,'');
             }
             slidesField.style.transform=`translateX(-${offset}px)`;
 
@@ -393,12 +393,11 @@
                 changeValue(slideIndex);
           
         });
-
         prev.addEventListener("click",()=>{
             if(offset==0){
-                offset+=+width.slice(0,width.length-2)*(slides.length-1);
+                offset+=+width.replace(/\D/g,'')*(slides.length-1);
             }else{
-                offset-=+width.slice(0,width.length-2);
+                offset-=+width.replace(/\D/g,'');
             }
             slidesField.style.transform=`translateX(-${offset}px)`;
 
@@ -422,6 +421,25 @@
                 changeValue(slideIndex);
             });
         });
+
+        const changeAutomaticNext=()=>{
+            if(offset==width.replace(/\D/g,'')*(slides.length-1)){
+                offset=0;
+            }else{
+                offset+=+width.replace(/\D/g,'');
+            }
+            slidesField.style.transform=`translateX(-${offset}px)`;
+
+                if(slideIndex==slides.length){
+                    slideIndex=1;
+                }else{
+                    slideIndex++;
+                }
+
+                changeValue(slideIndex);
+        }
+
+        setInterval(changeAutomaticNext,3000);
 
 
     });
